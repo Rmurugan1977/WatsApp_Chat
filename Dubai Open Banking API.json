@@ -1,0 +1,269 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Dubai Open Banking API",
+    "description": "This API provides access to various banking services in Dubai, allowing third-party applications to interact with bank data securely and efficiently.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Dubai Banking API Support",
+      "url": "https://support.dubaibankingapi.com",
+      "email": "support@dubaibankingapi.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Accounts",
+      "description": "Operations related to bank accounts"
+    },
+    {
+      "name": "Transactions",
+      "description": "Operations related to bank transactions"
+    },
+    {
+      "name": "Customers",
+      "description": "Operations related to customer information"
+    }
+  ],
+  "paths": {
+    "/accounts": {
+      "get": {
+        "operationId": "getAccounts",
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Retrieve a list of bank accounts",
+        "description": "This endpoint retrieves all bank accounts associated with the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "A list of bank accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No accounts found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}": {
+      "get": {
+        "operationId": "getAccountById",
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Retrieve a specific bank account",
+        "description": "This endpoint retrieves details of a specific bank account identified by the account ID.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the bank account to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the bank account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "operationId": "getTransactions",
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Retrieve a list of transactions",
+        "description": "This endpoint retrieves all transactions associated with the authenticated user's accounts.",
+        "responses": {
+          "200": {
+            "description": "A list of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transactions found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "type": "object",
+        "required": [
+          "id",
+          "accountNumber",
+          "accountType",
+          "balance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the account",
+            "example": "acc_123456"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "The account number",
+            "example": "1234567890"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Type of the account (e.g., savings, checking)",
+            "example": "savings"
+          },
+          "balance": {
+            "type": "number",
+            "format": "float",
+            "description": "Current balance of the account",
+            "example": 1500.75
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccountList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Account"
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "required": [
+          "id",
+          "amount",
+          "date",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the transaction",
+            "example": "txn_987654"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount of the transaction",
+            "example": 250
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time of the transaction",
+            "example": "2023-10-01T14:30:00Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the transaction",
+            "example": "Payment for services"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Transaction"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Resource not found"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
